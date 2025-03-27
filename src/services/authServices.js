@@ -6,7 +6,7 @@ const handleResponse = async (res) => {
   let data;
   try {
     data = await res.json();
-  } catch (error) {
+  } catch {
     throw new Error(`Invalid response from server. Status: ${res.status}`);
   }
 

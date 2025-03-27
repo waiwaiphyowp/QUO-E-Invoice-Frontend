@@ -39,7 +39,7 @@ function SignUp() {
     }
 
     setIsLoading(true);
-
+    // console.log(formData)
     try {
       const newUser = await signUp(formData);
       setUser(newUser);
@@ -67,7 +67,7 @@ function SignUp() {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              required
+              
               disabled={isLoading}
             />
           </div>
@@ -80,7 +80,7 @@ function SignUp() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              required
+              
               disabled={isLoading}
             />
           </div>
@@ -93,7 +93,7 @@ function SignUp() {
               name="passwordConf"
               value={formData.passwordConf}
               onChange={handleChange}
-              required
+              
               disabled={isLoading}
             />
           </div>
