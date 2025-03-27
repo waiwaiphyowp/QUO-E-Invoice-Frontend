@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './SignUp.css';  
 
 function SignUp() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -13,7 +13,7 @@ function SignUp() {
       alert('Passwords do not match!');
       return;
     }
-    console.log('Signing up with:', { email, password });
+    console.log('Signing up with:', { username, password });
   };
 
   return (
@@ -22,11 +22,11 @@ function SignUp() {
         <h2>Sign Up</h2>
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Email</label>
+            <label>Username</label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>

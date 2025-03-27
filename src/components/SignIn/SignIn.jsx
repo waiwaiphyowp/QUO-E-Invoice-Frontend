@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './SignIn.css';  
 function SignIn() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Signing in with:', { email, password });
+    console.log('Signing in with:', { username, password });
   };
 
   return (
@@ -19,11 +19,11 @@ function SignIn() {
         <h2>Sign In</h2>
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Email</label>
+            <label>Username</label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
