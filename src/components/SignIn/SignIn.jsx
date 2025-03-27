@@ -37,7 +37,7 @@ function SignIn() {
     try {
       const user = await signIn(formData);
       setUser(user); 
-      navigate('/'); 
+      navigate('/home'); 
     } catch (err) {
       console.error('Signin error:', err);
       setError(err.message || 'Invalid credentials. Please try again.');

@@ -1,0 +1,35 @@
+.home-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+.home-content {
+  margin-left: 250px; 
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+  flex: 1;
+}
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.paid-btn, .unpaid-btn, .draft-btn {
+  padding: 8px 16px;
+  margin: 0;
+  width: 100px;
+}
+
+.paid-btn:hover, .unpaid-btn:hover, .draft-btn:hover {
+  opacity: 0.8;
+}
