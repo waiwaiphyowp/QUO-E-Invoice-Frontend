@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { UserProvider } from "./contexts/userContext"; 
 import SignIn from "./components/SignIn/SignIn";
 import SignUp from "./components/SignUp/SignUp";
 
@@ -9,6 +10,7 @@ function App() {
   }, []);
 
   return (
+    <UserProvider>
     <Router>
       <Routes>
         <Route path="/" element={<SignIn />} />
@@ -16,6 +18,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
       </Routes>
     </Router>
+    </UserProvider>
   );
 }
 

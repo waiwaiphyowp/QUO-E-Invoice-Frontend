@@ -1,61 +1,117 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './SignUp.css';  
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { signUp } from '../../services/authServices';
+import { UserContext } from '../../contexts/userContext';
+import './SignUp.css';
 
 function SignUp() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const navigate = useNavigate();
+  const { setUser } = useContext(UserContext);
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+    passwordConf: ''
+  });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    setError('');
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      alert('Passwords do not match!');
+    setError('');
+    
+    if (!formData.username || !formData.password || !formData.passwordConf) {
+      setError('Please fill in all fields');
       return;
     }
-    console.log('Signing up with:', { username, password });
+
+    if (formData.password !== formData.passwordConf) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const newUser = await signUp(formData);
+      setUser(newUser);
+      navigate('/');
+    } catch (err) {
+      console.error('Signup error:', err);
+      setError(err.message || 'Signup failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="form-container">
       <div className="form-content">
         <h2>Sign Up</h2>
+        {error && <div>{error}</div>}
+        
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Username</label>
+            <label htmlFor="username">Username</label>
             <input
+              id="username"
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
               required
+              disabled={isLoading}
             />
           </div>
+          
           <div>
-            <label>Password</label>
+            <label htmlFor="password">Password</label>
             <input
+              id="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               required
+              disabled={isLoading}
             />
           </div>
+          
           <div>
-            <label>Confirm Password</label>
+            <label htmlFor="passwordConf">Confirm Password</label>
             <input
+              id="passwordConf"
               type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              name="passwordConf"
+              value={formData.passwordConf}
+              onChange={handleChange}
               required
+              disabled={isLoading}
             />
           </div>
-          <button type="submit">Sign Up</button>
+          
+          <button 
+            type="submit" 
+            disabled={isLoading}
+          >
+            {isLoading ? 'Signing Up...' : 'Sign Up'}
+          </button>
         </form>
+        
         <p>
           Already have an account? <Link to="/signin">Sign In</Link>
         </p>
       </div>
       <div className="title-container">
-        <h1>QUO</h1> 
+        <h1>QUO</h1>
       </div>
     </div>
   );
