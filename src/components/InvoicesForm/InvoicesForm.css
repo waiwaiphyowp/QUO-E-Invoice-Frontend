@@ -1,0 +1,67 @@
+.invoices-form-wrapper {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.invoices-form-wrapper h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-section {
+  margin-bottom: 30px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.form-section h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #333;
+}
+
+.form-section label {
+  display: block;
+  margin-bottom: 15px;
+}
+
+.form-section input,
+.form-section select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+.invoice-details-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.invoice-details-row label {
+  flex: 1;
+  min-width: 150px;
+  margin-bottom: 0;
+}
+
+.form-buttons {
+  text-align: center;
+}
+
+.form-buttons button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.form-buttons button:hover {
+  background-color: #0056b3;
+}

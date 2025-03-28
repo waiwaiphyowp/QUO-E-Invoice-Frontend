@@ -13,6 +13,10 @@ function Invoices() {
     navigate('/signin');
   };
 
+  const handleCreateInvoice = () => {
+    navigate('/invoices/new'); 
+  };
+
   if (!user) {
     navigate('/signin');
     return null;
@@ -25,7 +29,9 @@ function Invoices() {
         onLogout={handleLogout}
       />
       <div className="invoices-content">
-        <button className="create-invoice-btn">+ Create New Invoice</button>
+        <button className="create-invoice-btn" onClick={handleCreateInvoice}>
+          + Create New Invoice
+        </button>
       </div>
     </div>
   );

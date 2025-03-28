@@ -13,7 +13,7 @@ function Navbar({ username, onLogout }) {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
-        <Link to="/home">QUO</Link>
+        <p>QUO</p>
       </div>
       <div className="navbar-user">
         <span className="username">Welcome, {username}!</span>
