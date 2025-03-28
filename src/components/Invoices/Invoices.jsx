@@ -2,9 +2,9 @@ import React, { useContext } from 'react';
 import { UserContext } from '../../contexts/userContext';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar'; 
-import './Home.css';
+import './Invoices.css';
 
-function Home() {
+function Invoices() {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -19,20 +19,16 @@ function Home() {
   }
 
   return (
-    <div className="home-wrapper">
+    <div className="invoices-wrapper">
       <Navbar 
         username={user.username}
         onLogout={handleLogout}
       />
-      <div className="home-container">
-          <div className="status-buttons">
-        <button className="paid-btn">Paid</button>
-        <button className="unpaid-btn">Unpaid</button>
-        <button className="draft-btn">Draft</button>
-        </div>
+      <div className="invoices-content">
+        <button className="create-invoice-btn">+ Create New Invoice</button>
       </div>
     </div>
   );
 }
 
-export default Home;
+export default Invoices;

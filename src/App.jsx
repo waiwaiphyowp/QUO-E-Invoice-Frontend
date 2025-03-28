@@ -5,6 +5,7 @@ import { UserProvider } from "./contexts/userContext";
 import SignIn from "./components/SignIn/SignIn";
 import SignUp from "./components/SignUp/SignUp";
 import Home from "./components/Home/Home";
+import Invoices from "./components/Invoices/Invoices";
 
 function App() {
   useEffect(() => {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
           <Route path="/home" element={<Home />} />
+        <Route path="/invoices" element={<Invoices />} />
       </Routes>
     </Router>
     </UserProvider>
