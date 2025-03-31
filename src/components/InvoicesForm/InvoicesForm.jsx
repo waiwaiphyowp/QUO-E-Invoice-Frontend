@@ -1,7 +1,9 @@
+// src/components/InvoicesForm/InvoicesForm.jsx
 import React, { useContext, useState } from 'react';
 import { UserContext } from '../../contexts/userContext';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
+import invoiceServices from '../../services/invoiceServices';
 import './InvoicesForm.css';
 
 function InvoicesForm() {
@@ -12,10 +14,7 @@ function InvoicesForm() {
     companyName: '',
     phoneNumber: '',
     address: '',
-    invoiceNo: '',
-    description: '',
-    quantity: '',
-    amount: '',
+    lineItems: [{ itemNo: '', description: '', quantity: '', amount: '' }],
     subtotal: '',
     discount: '',
     gst: '',
@@ -33,39 +32,51 @@ function InvoicesForm() {
     return null;
   }
 
-  const handleChange = (e) => {
+  const handleChange = (e, index) => {
     const { name, value } = e.target;
+    if (index !== undefined) {
+      setFormData((prevData) => {
+        const newLineItems = [...prevData.lineItems];
+        newLineItems[index] = {
+          ...newLineItems[index],
+          [name]: value,
+        };
+        return {
+          ...prevData,
+          lineItems: newLineItems,
+        };
+      });
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleAddLine = () => {
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      lineItems: [...prevData.lineItems, { itemNo: '', description: '', quantity: '', amount: '' }],
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3000/invoices', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      if (response.ok) {
-        const savedInvoice = await response.json();
-        console.log('Invoice Saved:', savedInvoice);
-        navigate('/invoices');
+      const savedInvoice = await invoiceServices.createInvoice(user.id, formData);
+      console.log('Invoice Saved:', savedInvoice);
+      
+      if (formData.status === 'paid') {
+        // Navigate to Paid component with form data
+        navigate('/paid', { state: { invoiceData: formData } });
       } else {
-        console.error('Failed to save invoice:', response.statusText);
+        // Navigate to invoices list for other statuses
+        navigate('/invoices');
       }
     } catch (error) {
       console.error('Error submitting invoice:', error);
     }
-  };
-
-  const handleDraft = (e) => {
-    e.preventDefault();
-    console.log('Draft Saved:', formData);
   };
 
   const handleCancel = (e) => {
@@ -94,25 +105,48 @@ function InvoicesForm() {
           </label>
         </div>
 
-        <div className="form-section invoice-details-row">
-          <h3>Invoice Details</h3>
-          <label>
-            Invoice No
-            <input type="number" name="invoiceNo" value={formData.invoiceNo} onChange={handleChange} />
-          </label>
-          <label>
-            Description
-            <input type="text" name="description" value={formData.description} onChange={handleChange} />
-          </label>
-          <label>
-            Quantity
-            <input type="number" name="quantity" value={formData.quantity} onChange={handleChange} />
-          </label>
-          <label>
-            Amount
-            <input type="number" name="amount" value={formData.amount} onChange={handleChange} />
-          </label>
-        </div>
+        <button type="button" onClick={handleAddLine}>Add Line</button>
+
+        {formData.lineItems.map((item, index) => (
+          <div key={index} className="form-section invoice-details-row">
+            <label>
+              Item No
+              <input
+                type="number"
+                name="itemNo"
+                value={item.itemNo}
+                onChange={(e) => handleChange(e, index)}
+              />
+            </label>
+            <label>
+              Description
+              <input
+                type="text"
+                name="description"
+                value={item.description}
+                onChange={(e) => handleChange(e, index)}
+              />
+            </label>
+            <label>
+              Quantity
+              <input
+                type="number"
+                name="quantity"
+                value={item.quantity}
+                onChange={(e) => handleChange(e, index)}
+              />
+            </label>
+            <label>
+              Amount
+              <input
+                type="number"
+                name="amount"
+                value={item.amount}
+                onChange={(e) => handleChange(e, index)}
+              />
+            </label>
+          </div>
+        ))}
 
         <div className="form-section">
           <h3>Totals</h3>
@@ -138,12 +172,12 @@ function InvoicesForm() {
               <option value="select">Select</option>
               <option value="paid">Paid</option>
               <option value="unpaid">Unpaid</option>
+              <option value="draft">Draft</option>
             </select>
           </label>
         </div>
 
         <div className="form-buttons">
-          <button type="button" onClick={handleDraft}>Draft</button>
           <button type="submit">Save Invoice</button>
           <button type="button" onClick={handleCancel}>Cancel</button>
         </div>
