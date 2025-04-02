@@ -49,12 +49,8 @@ function InvoiceList({ status, title }) {
   }, [status]);
 
   useEffect(() => {
-    if (!user) {
-      navigate('/signin');
-      return;
-    }
     fetchInvoices();
-  }, [status, user, navigate, fetchInvoices]);
+  }, [status, fetchInvoices]);
 
   const handleEditClick = (invoice) => {
     setEditingInvoice({ 
