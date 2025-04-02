@@ -6,6 +6,9 @@ import SignUp from "./components/SignUp/SignUp";
 import Home from "./components/Home/Home";
 import Invoices from "./components/Invoices/Invoices";
 import InvoicesForm from './components/InvoicesForm/InvoicesForm';
+import PaidInvoices from './components/PaidInvoices/PaidInvoices';
+import UnpaidInvoices from './components/UnpaidInvoices/UnpaidInvoices';
+import DraftInvoices from './components/DraftInvoices/DraftInvoices';
 
 function App() {
   useEffect(() => {
@@ -22,6 +25,9 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/invoices" element={<Invoices />} />
         <Route path="/invoices/new" element={<InvoicesForm />} />
+          <Route path="/paid" element={<PaidInvoices />} />
+          <Route path="/unpaid" element={<UnpaidInvoices />} />
+          <Route path="/draft" element={<DraftInvoices />} />
       </Routes>
     </Router>
     </UserProvider>

@@ -1,9 +1,9 @@
-const BASE_URL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/invoices`;
+const BASE_URL = "http://localhost:3000/invoices";
 
 const invoiceServices = {
   createInvoice: async (invoiceData) => {
     try {
-      const res = await fetch(`${BASE_URL}/${invoiceData.userId}`, {
+      const res = await fetch(`${BASE_URL}`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -24,37 +24,9 @@ const invoiceServices = {
     }
   },
 
-  createInvoiceLegacy: async (userId, invoiceData) => {
+  getUserInvoices: async () => {
     try {
-      const res = await fetch(`${BASE_URL}/${userId}/invoices`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(invoiceData),
-      });
-
-      if (!res.ok) {
-        throw new Error(`Error: ${res.statusText}`);
-      }
-
-      const data = await res.json();
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      return data;
-    } catch (error) {
-      console.log('Error in createInvoice function:', error);
-      throw error;
-    }
-  },
-
-  getUserInvoices: async (userId) => {
-    try {
-      const res = await fetch(`${BASE_URL}/user/${userId}`, {
+      const res = await fetch(`${BASE_URL}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -66,49 +38,26 @@ const invoiceServices = {
 
       return await res.json();
     } catch (error) {
-      console.error('Error fetching user invoices:', error);
+      console.error('Error fetching invoices:', error);
       throw error;
     }
   },
 
-  updateInvoice: async (invoiceId, updatedData) => {
+  getInvoicesByStatus: async (status) => {
     try {
-      const res = await fetch(`${BASE_URL}/${invoiceId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(updatedData)
-      });
-
-      if (!res.ok) {
-        throw new Error(`Failed to update invoice: ${res.statusText}`);
-      }
-
-      return await res.json();
-    } catch (error) {
-      console.error('Error updating invoice:', error);
-      throw error;
-    }
-  },
-
-  deleteInvoice: async (invoiceId) => {
-    try {
-      const res = await fetch(`${BASE_URL}/${invoiceId}`, {
-        method: 'DELETE',
+      const res = await fetch(`${BASE_URL}/${status}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
 
       if (!res.ok) {
-        throw new Error(`Failed to delete invoice: ${res.statusText}`);
+        throw new Error(`Failed to fetch ${status} invoices: ${res.statusText}`);
       }
 
       return await res.json();
     } catch (error) {
-      console.error('Error deleting invoice:', error);
+      console.error(`Error fetching ${status} invoices:`, error);
       throw error;
     }
   }

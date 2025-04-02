@@ -26,9 +26,9 @@ function Home() {
       />
       <div className="home-container">
           <div className="status-buttons">
-        <button className="paid-btn">Paid</button>
-        <button className="unpaid-btn">Unpaid</button>
-        <button className="draft-btn">Draft</button>
+          <button className="paid-btn" onClick={() => navigate('/paid')}>Paid</button>
+          <button className="unpaid-btn" onClick={() => navigate('/unpaid')}>Unpaid</button>
+          <button className="draft-btn" onClick={() => navigate('/draft')}>Draft</button>
         </div>
       </div>
     </div>
