@@ -1,5 +1,4 @@
-// src/components/InvoicesForm/InvoicesForm.jsx
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../../contexts/userContext';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
@@ -21,6 +20,33 @@ function InvoicesForm() {
     total: '',
     status: 'select',
   });
+
+  useEffect(() => {
+    const updatedLineItems = formData.lineItems.map(item => {
+      const quantity = parseFloat(item.quantity) || 0;
+      const amount = parseFloat(item.amount) || 0;
+      return {
+        ...item,
+        subtotal: (quantity * amount).toFixed(2)
+      };
+    });
+
+    const itemsSubtotal = updatedLineItems.reduce((sum, item) => 
+      sum + (parseFloat(item.subtotal) || 0), 0);
+    
+    const discount = parseFloat(formData.discount) || 0;
+    const subtotalAfterDiscount = itemsSubtotal - discount;
+    const gstPercentage = parseFloat(formData.gst) || 0;
+    const gstAmount = (subtotalAfterDiscount * gstPercentage) / 100;
+    const total = subtotalAfterDiscount + gstAmount;
+
+    setFormData(prev => ({
+      ...prev,
+      lineItems: updatedLineItems,
+      subtotal: itemsSubtotal.toFixed(2),
+      total: total.toFixed(2)
+    }));
+  }, [formData.lineItems, formData.discount, formData.gst]);
 
   const handleLogout = () => {
     setUser(null);
@@ -61,6 +87,13 @@ function InvoicesForm() {
     }));
   };
 
+  const handleRemoveLine = (index) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      lineItems: prevData.lineItems.filter((_, i) => i !== index),
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -68,10 +101,8 @@ function InvoicesForm() {
       console.log('Invoice Saved:', savedInvoice);
       
       if (formData.status === 'paid') {
-        // Navigate to Paid component with form data
         navigate('/paid', { state: { invoiceData: formData } });
       } else {
-        // Navigate to invoices list for other statuses
         navigate('/invoices');
       }
     } catch (error) {
@@ -93,15 +124,31 @@ function InvoicesForm() {
           <h3>Company Details</h3>
           <label>
             Company Name
-            <input type="text" name="companyName" value={formData.companyName} onChange={handleChange} />
+            <input 
+              type="text" 
+              name="companyName" 
+              value={formData.companyName} 
+              onChange={handleChange} 
+            />
           </label>
           <label>
             Phone Number
-            <input type="number" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} />
+            <input 
+              type="text" 
+              name="phoneNumber" 
+              value={formData.phoneNumber} 
+              onChange={handleChange}
+              pattern="[0-9]*"
+            />
           </label>
           <label>
             Address
-            <input type="text" name="address" value={formData.address} onChange={handleChange} />
+            <input 
+              type="text" 
+              name="address" 
+              value={formData.address} 
+              onChange={handleChange} 
+            />
           </label>
         </div>
 
@@ -112,7 +159,7 @@ function InvoicesForm() {
             <label>
               Item No
               <input
-                type="number"
+                type="text"
                 name="itemNo"
                 value={item.itemNo}
                 onChange={(e) => handleChange(e, index)}
@@ -134,16 +181,30 @@ function InvoicesForm() {
                 name="quantity"
                 value={item.quantity}
                 onChange={(e) => handleChange(e, index)}
+                min="1"
               />
             </label>
-            <label>
+            <label className="amount-label">
               Amount
-              <input
-                type="number"
-                name="amount"
-                value={item.amount}
-                onChange={(e) => handleChange(e, index)}
-              />
+              <div className="amount-container">
+                <input
+                  type="number"
+                  name="amount"
+                  value={item.amount}
+                  onChange={(e) => handleChange(e, index)}
+                  step="0.01"
+                  min="0"
+                />
+                {formData.lineItems.length > 1 && (
+                  <button
+                    type="button"
+                    className="remove-line-btn"
+                    onClick={() => handleRemoveLine(index)}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
             </label>
           </div>
         ))}
@@ -152,19 +213,35 @@ function InvoicesForm() {
           <h3>Totals</h3>
           <label>
             Subtotal
-            <input type="number" name="subtotal" value={formData.subtotal} onChange={handleChange} />
+            <input type="number" name="subtotal" value={formData.subtotal} readOnly />
           </label>
           <label>
             Discount
-            <input type="text" name="discount" value={formData.discount} onChange={handleChange} />
+            <input 
+              type="number" 
+              name="discount" 
+              value={formData.discount} 
+              onChange={handleChange}
+              step="0.01"
+              min="0"
+              placeholder="Enter amount"
+            />
           </label>
           <label>
-            GST
-            <input type="number" name="gst" value={formData.gst} onChange={handleChange} />
+            GST (%)
+            <input 
+              type="number" 
+              name="gst" 
+              value={formData.gst} 
+              onChange={handleChange}
+              step="0.01"
+              min="0"
+              placeholder="Enter percentage"
+            />
           </label>
           <label>
             Total
-            <input type="number" name="total" value={formData.total} onChange={handleChange} />
+            <input type="number" name="total" value={formData.total} readOnly />
           </label>
           <label>
             Status

@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { UserProvider } from "./contexts/userContext"; 
@@ -20,7 +19,7 @@ function App() {
         <Route path="/" element={<SignIn />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-          <Route path="/home" element={<Home />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/invoices" element={<Invoices />} />
         <Route path="/invoices/new" element={<InvoicesForm />} />
       </Routes>

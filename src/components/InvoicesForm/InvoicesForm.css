@@ -2,6 +2,9 @@
   max-width: 800px;
   margin: 20px auto;
   padding: 20px;
+  margin-left: 220px;
+  width: calc(100% - 240px);
+  box-sizing: border-box;
 }
 
 .invoices-form-wrapper h2 {
@@ -36,6 +39,17 @@
   box-sizing: border-box;
 }
 
+.form-section input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: none;
+}
+
+.form-section input[type="number"]::-webkit-outer-spin-button,
+.form-section input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .invoice-details-row {
   display: flex;
   flex-wrap: wrap;
@@ -64,4 +78,51 @@
 
 .form-buttons button:hover {
   background-color: #0056b3;
+}
+
+.amount-label {
+  position: relative;
+}
+
+.amount-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.remove-line-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-line-btn:hover {
+  background-color: #c82333;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-right: none;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .invoices-form-wrapper {
+    margin-left: 0;
+    width: 100%;
+    max-width: none;
+    padding: 10px;
+  }
 }
