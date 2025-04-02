@@ -19,6 +19,9 @@ function InvoicesForm() {
     status: 'select',
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
   const itemsSubtotal = formData.lineItems.reduce((sum, item) => {
     const quantity = parseFloat(item.quantity) || 0;
     const amount = parseFloat(item.amount) || 0;
@@ -79,22 +82,63 @@ function InvoicesForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError('');
+
     try {
-      const invoiceData = { 
-        ...formData, 
-        subtotal: itemsSubtotal.toFixed(2), 
-        total: total.toFixed(2) 
-      };
-      const savedInvoice = await invoiceServices.createInvoice(user.id, invoiceData);
-      console.log('Invoice Saved:', savedInvoice);
-      
-      if (formData.status === 'paid') {
-        navigate('/paid', { state: { invoiceData: formData } });
-      } else {
-        navigate('/invoices');
+      // Validate required fields
+      if (!formData.companyName || !formData.phoneNumber || !formData.address) {
+        throw new Error('Please fill in all company details');
       }
+
+      // Validate line items
+      const hasEmptyLineItems = formData.lineItems.some(item => 
+        !item.itemNo || !item.description || !item.quantity || !item.amount
+      );
+      
+      if (hasEmptyLineItems) {
+        throw new Error('Please fill in all line item fields');
+      }
+
+      // Validate status
+      if (formData.status === 'select') {
+        throw new Error('Please select an invoice status');
+      }
+
+      // Prepare invoice data
+      const invoiceData = { 
+        companyName: formData.companyName,
+        phoneNumber: formData.phoneNumber,
+        address: formData.address,
+        lineItems: formData.lineItems.map(item => ({
+          itemNo: item.itemNo,
+          description: item.description,
+          quantity: parseFloat(item.quantity),
+          amount: parseFloat(item.amount)
+        })),
+        discount: parseFloat(formData.discount) || 0,
+        gst: parseFloat(formData.gst) || 0,
+        subtotal: itemsSubtotal,
+        total: total,
+        status: formData.status,
+        userId: user._id  // Ensure user ID is included
+      };
+
+      // Submit to backend
+      const savedInvoice = await invoiceServices.createInvoice(invoiceData);
+      
+      // Redirect based on status
+      if (formData.status === 'paid') {
+        navigate('/paid', { state: { invoice: savedInvoice } });
+      } else {
+        navigate('/invoices', { state: { newInvoice: savedInvoice } });
+      }
+
     } catch (error) {
       console.error('Error submitting invoice:', error);
+      setError(error.message || 'Failed to save invoice. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -107,7 +151,11 @@ function InvoicesForm() {
     <div className="invoices-form-wrapper">
       <Navbar username={user.username} onLogout={handleLogout} />
       <h2>Create New Invoice</h2>
+      
+      {error && <div className="error-message">{error}</div>}
+      
       <form onSubmit={handleSubmit}>
+        {/* Company Details Section (unchanged) */}
         <div className="form-section">
           <h3>Company Details</h3>
           <label>
@@ -117,6 +165,7 @@ function InvoicesForm() {
               name="companyName" 
               value={formData.companyName} 
               onChange={handleChange} 
+              required
             />
           </label>
           <label>
@@ -127,6 +176,7 @@ function InvoicesForm() {
               value={formData.phoneNumber} 
               onChange={handleChange}
               pattern="[0-9]*"
+              required
             />
           </label>
           <label>
@@ -136,12 +186,14 @@ function InvoicesForm() {
               name="address" 
               value={formData.address} 
               onChange={handleChange} 
+              required
             />
           </label>
         </div>
 
         <button type="button" onClick={handleAddLine}>Add Line</button>
 
+        {/* Line Items Section (unchanged) */}
         {formData.lineItems.map((item, index) => (
           <div key={index} className="form-section invoice-details-row">
             <label>
@@ -151,6 +203,7 @@ function InvoicesForm() {
                 name="itemNo"
                 value={item.itemNo}
                 onChange={(e) => handleChange(e, index)}
+                required
               />
             </label>
             <label>
@@ -160,6 +213,7 @@ function InvoicesForm() {
                 name="description"
                 value={item.description}
                 onChange={(e) => handleChange(e, index)}
+                required
               />
             </label>
             <label>
@@ -170,6 +224,7 @@ function InvoicesForm() {
                 value={item.quantity}
                 onChange={(e) => handleChange(e, index)}
                 min="1"
+                required
                 onWheel={(e) => e.target.blur()}
               />
             </label>
@@ -183,6 +238,7 @@ function InvoicesForm() {
                   onChange={(e) => handleChange(e, index)}
                   step="0.01"
                   min="0"
+                  required
                   onWheel={(e) => e.target.blur()}
                 />
                 {formData.lineItems.length > 1 && (
@@ -199,6 +255,7 @@ function InvoicesForm() {
           </div>
         ))}
 
+        {/* Totals Section (unchanged) */}
         <div className="form-section">
           <h3>Totals</h3>
           <label>
@@ -237,7 +294,12 @@ function InvoicesForm() {
           </label>
           <label>
             Status
-            <select name="status" value={formData.status} onChange={handleChange}>
+            <select 
+              name="status" 
+              value={formData.status} 
+              onChange={handleChange}
+              required
+            >
               <option value="select">Select</option>
               <option value="paid">Paid</option>
               <option value="unpaid">Unpaid</option>
@@ -247,7 +309,9 @@ function InvoicesForm() {
         </div>
 
         <div className="form-buttons">
-          <button type="submit">Save Invoice</button>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Saving...' : 'Save Invoice'}
+          </button>
           <button type="button" onClick={handleCancel}>Cancel</button>
         </div>
       </form>
