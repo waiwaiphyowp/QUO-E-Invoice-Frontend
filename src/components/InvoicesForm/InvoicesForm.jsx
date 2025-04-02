@@ -155,7 +155,7 @@ function InvoicesForm() {
       {error && <div className="error-message">{error}</div>}
       
       <form onSubmit={handleSubmit}>
-        {/* Company Details Section (unchanged) */}
+        {/* Company Details Section */}
         <div className="form-section">
           <h3>Company Details</h3>
           <label>
@@ -193,7 +193,7 @@ function InvoicesForm() {
 
         <button type="button" onClick={handleAddLine}>Add Line</button>
 
-        {/* Line Items Section (unchanged) */}
+        {/* Line Items Section */}
         {formData.lineItems.map((item, index) => (
           <div key={index} className="form-section invoice-details-row">
             <label>
@@ -255,7 +255,7 @@ function InvoicesForm() {
           </div>
         ))}
 
-        {/* Totals Section (unchanged) */}
+        {/* Totals Section */}
         <div className="form-section">
           <h3>Totals</h3>
           <label>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { UserContext } from '../../contexts/userContext';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
@@ -6,12 +6,17 @@ import invoiceServices from '../../services/invoiceServices';
 import './InvoicesList.css';
 
 function InvoiceList({ status, title }) {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [editingInvoice, setEditingInvoice] = useState(null);
+
+  const handleLogout = () => {
+    setUser(null);
+    navigate('/signin');
+  };
 
   const calculateTotals = (invoice) => {
     const itemsSubtotal = invoice.lineItems.reduce((sum, item) => {
@@ -29,15 +34,7 @@ function InvoiceList({ status, title }) {
     return { subtotal: itemsSubtotal, gstAmount, total };
   };
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/signin');
-      return;
-    }
-    fetchInvoices();
-  }, [status, user, navigate]);
-
-  const fetchInvoices = async () => {
+  const fetchInvoices = useCallback(async () => {
     try {
       setLoading(true);
       const allInvoices = await invoiceServices.getUserInvoices();
@@ -49,7 +46,15 @@ function InvoiceList({ status, title }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [status]);
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/signin');
+      return;
+    }
+    fetchInvoices();
+  }, [status, user, navigate, fetchInvoices]);
 
   const handleEditClick = (invoice) => {
     setEditingInvoice({ 
@@ -357,7 +362,7 @@ function InvoiceList({ status, title }) {
 
   return (
     <div className="invoices-wrapper">
-      <Navbar username={user?.username} />
+      <Navbar username={user?.username} onLogout={handleLogout} />
       <div className="invoices-content">
         <h2>{title}</h2>
         {error && <div className="error-message">{error}</div>}
