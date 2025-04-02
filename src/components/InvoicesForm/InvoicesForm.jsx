@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { UserContext } from '../../contexts/userContext';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
@@ -14,39 +14,22 @@ function InvoicesForm() {
     phoneNumber: '',
     address: '',
     lineItems: [{ itemNo: '', description: '', quantity: '', amount: '' }],
-    subtotal: '',
     discount: '',
     gst: '',
-    total: '',
     status: 'select',
   });
 
-  useEffect(() => {
-    const updatedLineItems = formData.lineItems.map(item => {
-      const quantity = parseFloat(item.quantity) || 0;
-      const amount = parseFloat(item.amount) || 0;
-      return {
-        ...item,
-        subtotal: (quantity * amount).toFixed(2)
-      };
-    });
+  const itemsSubtotal = formData.lineItems.reduce((sum, item) => {
+    const quantity = parseFloat(item.quantity) || 0;
+    const amount = parseFloat(item.amount) || 0;
+    return sum + quantity * amount;
+  }, 0);
 
-    const itemsSubtotal = updatedLineItems.reduce((sum, item) => 
-      sum + (parseFloat(item.subtotal) || 0), 0);
-    
-    const discount = parseFloat(formData.discount) || 0;
-    const subtotalAfterDiscount = itemsSubtotal - discount;
-    const gstPercentage = parseFloat(formData.gst) || 0;
-    const gstAmount = (subtotalAfterDiscount * gstPercentage) / 100;
-    const total = subtotalAfterDiscount + gstAmount;
-
-    setFormData(prev => ({
-      ...prev,
-      lineItems: updatedLineItems,
-      subtotal: itemsSubtotal.toFixed(2),
-      total: total.toFixed(2)
-    }));
-  }, [formData.lineItems, formData.discount, formData.gst]);
+  const discount = parseFloat(formData.discount) || 0;
+  const subtotalAfterDiscount = itemsSubtotal - discount;
+  const gstPercentage = parseFloat(formData.gst) || 0;
+  const gstAmount = (subtotalAfterDiscount * gstPercentage) / 100;
+  const total = subtotalAfterDiscount + gstAmount;
 
   const handleLogout = () => {
     setUser(null);
@@ -97,7 +80,12 @@ function InvoicesForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const savedInvoice = await invoiceServices.createInvoice(user.id, formData);
+      const invoiceData = { 
+        ...formData, 
+        subtotal: itemsSubtotal.toFixed(2), 
+        total: total.toFixed(2) 
+      };
+      const savedInvoice = await invoiceServices.createInvoice(user.id, invoiceData);
       console.log('Invoice Saved:', savedInvoice);
       
       if (formData.status === 'paid') {
@@ -112,7 +100,7 @@ function InvoicesForm() {
 
   const handleCancel = (e) => {
     e.preventDefault();
-    navigate('/invoices');
+    navigate(-1);
   };
 
   return (
@@ -213,7 +201,7 @@ function InvoicesForm() {
           <h3>Totals</h3>
           <label>
             Subtotal
-            <input type="number" name="subtotal" value={formData.subtotal} readOnly />
+            <input type="number" value={itemsSubtotal.toFixed(2)} readOnly />
           </label>
           <label>
             Discount
@@ -241,7 +229,7 @@ function InvoicesForm() {
           </label>
           <label>
             Total
-            <input type="number" name="total" value={formData.total} readOnly />
+            <input type="number" value={total.toFixed(2)} readOnly />
           </label>
           <label>
             Status
