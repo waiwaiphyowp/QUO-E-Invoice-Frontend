@@ -170,6 +170,7 @@ function InvoicesForm() {
                 value={item.quantity}
                 onChange={(e) => handleChange(e, index)}
                 min="1"
+                onWheel={(e) => e.target.blur()}
               />
             </label>
             <label className="amount-label">
@@ -182,6 +183,7 @@ function InvoicesForm() {
                   onChange={(e) => handleChange(e, index)}
                   step="0.01"
                   min="0"
+                  onWheel={(e) => e.target.blur()}
                 />
                 {formData.lineItems.length > 1 && (
                   <button
@@ -212,6 +214,7 @@ function InvoicesForm() {
               onChange={handleChange}
               step="0.01"
               min="0"
+              onWheel={(e) => e.target.blur()}
               placeholder="Enter amount"
             />
           </label>
@@ -224,6 +227,7 @@ function InvoicesForm() {
               onChange={handleChange}
               step="0.01"
               min="0"
+              onWheel={(e) => e.target.blur()}
               placeholder="Enter percentage"
             />
           </label>
