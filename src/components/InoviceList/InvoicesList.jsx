@@ -119,11 +119,9 @@ function InvoiceList({ status, title }) {
 
   const handleDeleteInvoice = async (invoiceId) => {
     try {
-      if (window.confirm('Are you sure you want to delete this invoice?')) {
-        await invoiceServices.deleteInvoice(invoiceId);
-        setInvoices(invoices.filter(invoice => invoice._id !== invoiceId));
-        setError('');
-      }
+      await invoiceServices.deleteInvoice(invoiceId);
+      setInvoices(invoices.filter(invoice => invoice._id !== invoiceId));
+      setError('');
     } catch (err) {
       setError(err.message || 'Failed to delete invoice');
     }
