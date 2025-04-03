@@ -1,6 +1,6 @@
 // const BASE_URL = "http://localhost:3000/auth";
 
-const BASE_URL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/auth`;
+const BASE_URL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/api/auth`;
 
 const handleResponse = async (res) => {
   let data;
