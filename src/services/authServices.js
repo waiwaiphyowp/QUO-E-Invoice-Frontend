@@ -42,12 +42,13 @@ const signUp = async (formData) => {
 
 const signIn = async (formData) => {
   try {
+    console.log("Sending request to:", `${BASE_URL}/sign-in`); // Debug
     const res = await fetch(`${BASE_URL}/sign-in`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
-
+    console.log("Response status:", res.status); // Debug
     return await handleResponse(res);
   } catch (error) {
     console.log(error);
