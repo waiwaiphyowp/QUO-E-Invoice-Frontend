@@ -9,7 +9,7 @@ https://github.com/waiwaiphyowp/QUO-E-Invoice-Backend
 # Project Description
 ## Overview
 
-QUO is a lightweight, user-friendly invoicing platform designed for freelancers, solopreneurs, and small businesses. It simplifies billing with an intuitive interface, real-time calculations, and secure cloud storage—so you can focus on your work, not paperwork.
+QUO is a lightweight, user friendly invoicing platform designed for freelancers, solopreneurs, and small businesses. It simplifies billing with an intuitive interface, real-time calculations, and secure cloud storage so you can focus on your work, not paperwork.
 
 ## Key Features
 
@@ -19,6 +19,10 @@ QUO is a lightweight, user-friendly invoicing platform designed for freelancers,
   - Filter by status: Draft, Unpaid, Paid
   - Edit existing invoices with one click
   - Delete or update invoices anytime
+
+## Sign Up Page
+<img width="922" alt="Sign-Up" src="https://github.com/user-attachments/assets/74b404aa-d067-4b20-b3a0-00655121bbe7" />
+
 
 ## User Stories
 
